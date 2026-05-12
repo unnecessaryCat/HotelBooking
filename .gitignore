@@ -1,0 +1,29 @@
+## .NET / C#
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.DotSettings.user
+
+## Rider / JetBrains
+.idea/
+*.sln.iml
+
+## Environment / secrets
+.env
+appsettings.Development.json
+
+## EF Core
+*.db
+*.db-shm
+*.db-wal
+
+## OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Build output
+publish/
+artifacts/
