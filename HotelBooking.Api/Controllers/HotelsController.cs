@@ -10,20 +10,34 @@ namespace HotelBooking.Api.Controllers;
 [Produces("application/json")]
 public class HotelsController(IHotelService hotelService, IRoomService roomService) : ControllerBase
 {
-    /// <summary>Find a hotel by name (partial match, case-insensitive).</summary>
+    /// <summary>List all hotels, optionally filtered by a partial name match.</summary>
+    /// <param name="name">Optional partial name to filter by.</param>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<HotelResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetHotels([FromQuery] string? name)
+    {
+        var hotels = await hotelService.GetHotelsAsync(name);
+        return Ok(hotels);
+    }
+
+    /// <summary>Find a single hotel by exact name.</summary>
+    /// <param name="name">The exact hotel name to look up.</param>
+    [HttpGet("find")]
     [ProducesResponseType(typeof(HotelResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> FindByName([FromQuery] string name)
+    //There is a bit of an issue with this - name isn't a unique field. We could make it unique
+    //but that doesn't feel correct. Generally, I would prefer to either have a business 
+    //limitation stating all names must be unique or use the id as the input parameter.
+    public async Task<IActionResult> FindByExactName([FromQuery] string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest(new { error = "The 'name' query parameter is required." });
 
-        var hotel = await hotelService.FindByNameAsync(name);
+        var hotel = await hotelService.FindByExactNameAsync(name);
 
         return hotel is null
-            ? NotFound(new { error = $"No hotel found matching '{name}'." })
+            ? NotFound(new { error = $"No hotel found with the name '{name}'." })
             : Ok(hotel);
     }
 

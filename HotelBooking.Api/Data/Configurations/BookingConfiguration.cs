@@ -12,7 +12,7 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
 
         builder.Property(b => b.BookingReference)
             .IsRequired()
-            .HasMaxLength(40); // "BK" + GUID (36 chars) = 38 chars; 40 gives a small buffer
+            .HasMaxLength(40);
 
         builder.HasIndex(b => b.BookingReference)
             .IsUnique();

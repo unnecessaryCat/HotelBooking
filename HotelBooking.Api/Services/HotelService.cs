@@ -7,13 +7,25 @@ namespace HotelBooking.Api.Services;
 
 public class HotelService(AppDbContext context) : IHotelService
 {
-    public async Task<HotelResponse?> FindByNameAsync(string name)
+    public async Task<List<HotelResponse>> GetHotelsAsync(string? name)
     {
-        var hotel = await context.Hotels
-            .Where(h => EF.Functions.Like(h.Name, $"%{name}%"))
+        var query = context.Hotels.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(name))
+            query = query.Where(h => EF.Functions.Like(h.Name, $"%{name.Trim()}%"));
+
+        return await query
+            .Select(h => new HotelResponse { Id = h.Id, Name = h.Name })
+            .ToListAsync();
+    }
+
+    public async Task<HotelResponse?> FindByExactNameAsync(string name)
+    {
+        var normalised = name.Trim();
+
+        return await context.Hotels
+            .Where(h => h.Name == normalised)
             .Select(h => new HotelResponse { Id = h.Id, Name = h.Name })
             .FirstOrDefaultAsync();
-
-        return hotel;
     }
 }

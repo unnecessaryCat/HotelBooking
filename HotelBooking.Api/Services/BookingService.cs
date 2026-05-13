@@ -13,7 +13,8 @@ public class BookingService(AppDbContext context) : IBookingService
 {
     public async Task<BookingResponse> CreateBookingAsync(CreateBookingRequest request)
     {
-        // trim whitespace and convert to lowercase - to ensure uniqueness
+        // Trim whitespace and convert to lowercase - to ensure uniqueness.
+        // We could check if the email is valid if it isn't, we could throw an error or warning but out of scope for now.
         request.CustomerEmail = request.CustomerEmail.Trim().ToLowerInvariant();
 
         if (request.CheckOutDate <= request.CheckInDate)
@@ -33,17 +34,18 @@ public class BookingService(AppDbContext context) : IBookingService
                 throw new BookingValidationException(
                     $"Requested {request.GuestCount} guests exceed room capacity of {room.Capacity}.");
 
-            // Re-check availability inside the transaction to guard against races
-            var conflict = await context.Bookings.AnyAsync(b =>
+            // Check to make sure a conflicting booking doesn't already exist inside
+            // the transaction to guard against race conditions.
+            var bookingConflict = await context.Bookings.AnyAsync(b =>
                 b.RoomId == request.RoomId &&
-                b.CheckInDate < request.CheckOutDate &&
+                b.CheckInDate <= request.CheckOutDate &&
                 b.CheckOutDate > request.CheckInDate);
 
-            if (conflict)
+            if (bookingConflict)
                 throw new ConflictException(
                     "The room is not available for the requested dates.");
 
-            var reference = await GenerateUniqueReferenceAsync(); // TODO: this seems over kill - a Guid would be fine
+            var reference = Guid.NewGuid().ToString();
 
             var booking = new Booking
             {
@@ -79,18 +81,7 @@ public class BookingService(AppDbContext context) : IBookingService
         return booking is null ? null : MapToResponse(booking, booking.Room);
     }
 
-    private async Task<string> GenerateUniqueReferenceAsync()
-    {
-        string reference;
-        do
-        {
-            reference = "BK" + Guid.NewGuid();
-        }
-        while (await context.Bookings.AnyAsync(b => b.BookingReference == reference));
-
-        return reference;
-    }
-
+    // Could use something like AutoMap, if it was bigger, this is manual but ok for now
     private static BookingResponse MapToResponse(Booking booking, Room room) => new()
     {
         Id = booking.Id,

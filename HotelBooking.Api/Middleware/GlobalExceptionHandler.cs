@@ -12,10 +12,10 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     {
         var (statusCode, message) = exception switch
         {
-            NotFoundException ex           => (StatusCodes.Status404NotFound, ex.Message),
-            ConflictException ex           => (StatusCodes.Status409Conflict, ex.Message),
-            BookingValidationException ex  => (StatusCodes.Status400BadRequest, ex.Message),
-            _                              => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
+            NotFoundException ex => (StatusCodes.Status404NotFound, ex.Message),
+            ConflictException ex => (StatusCodes.Status409Conflict, ex.Message),
+            BookingValidationException ex => (StatusCodes.Status400BadRequest, ex.Message),
+            _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
         };
 
         if (statusCode == StatusCodes.Status500InternalServerError)

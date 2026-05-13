@@ -13,7 +13,7 @@ public class DatabaseSeeder(AppDbContext context)
         if (await context.Hotels.AnyAsync())
             return;
 
-        var hotel1 = new Hotel { Name = "The Grand Pelican" };
+            var hotel1 = new Hotel { Name = "The Grand Pelican" };
         var hotel2 = new Hotel { Name = "Harbour View Suites" };
 
         context.Hotels.AddRange(hotel1, hotel2);
@@ -26,7 +26,7 @@ public class DatabaseSeeder(AppDbContext context)
             new() { HotelId = hotel1.Id, Type = RoomType.Single, Capacity = 1 },
             new() { HotelId = hotel1.Id, Type = RoomType.Double, Capacity = 2 },
             new() { HotelId = hotel1.Id, Type = RoomType.Double, Capacity = 2 },
-            new() { HotelId = hotel1.Id, Type = RoomType.Deluxe, Capacity = 4 },
+            new() { HotelId = hotel1.Id, Type = RoomType.Deluxe, Capacity = 6 },
             new() { HotelId = hotel1.Id, Type = RoomType.Deluxe, Capacity = 4 },
 
             new() { HotelId = hotel2.Id, Type = RoomType.Single, Capacity = 1 },
@@ -34,7 +34,7 @@ public class DatabaseSeeder(AppDbContext context)
             new() { HotelId = hotel2.Id, Type = RoomType.Double, Capacity = 2 },
             new() { HotelId = hotel2.Id, Type = RoomType.Double, Capacity = 2 },
             new() { HotelId = hotel2.Id, Type = RoomType.Deluxe, Capacity = 4 },
-            new() { HotelId = hotel2.Id, Type = RoomType.Deluxe, Capacity = 4 }
+            new() { HotelId = hotel2.Id, Type = RoomType.Deluxe, Capacity = 8 }
         };
 
         context.Rooms.AddRange(rooms);

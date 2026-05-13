@@ -17,6 +17,7 @@ public class RoomService(AppDbContext context) : IRoomService
         if (checkOut <= checkIn)
             throw new BookingValidationException("Check-out date must be after check-in date.");
 
+        // could also floor this rather than throwing an error...
         if (guestCount < 1)
             throw new BookingValidationException("Guest count must be at least 1.");
 
@@ -24,7 +25,6 @@ public class RoomService(AppDbContext context) : IRoomService
         if (!hotelExists)
             throw new NotFoundException($"Hotel with ID {hotelId} was not found.");
 
-        // Half-open interval overlap: existing.CheckIn < requested.CheckOut AND existing.CheckOut > requested.CheckIn
         var availableRooms = await context.Rooms
             .Where(r => r.HotelId == hotelId)
             .Where(r => r.Capacity >= guestCount)

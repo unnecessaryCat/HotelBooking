@@ -19,6 +19,8 @@ public class CreateBookingRequest
     [Required]
     public DateOnly CheckOutDate { get; set; }
 
-    [Required, Range(1, 20)]
+    // Note: this max value hasn't been specified anywhere in the brief - I've picked
+    // that feels like a reasonable limit for most rooms.
+    [Required, Range(1, 8)]
     public int GuestCount { get; set; }
 }

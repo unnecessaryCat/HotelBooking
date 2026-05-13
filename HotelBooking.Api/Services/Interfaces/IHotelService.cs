@@ -4,5 +4,6 @@ namespace HotelBooking.Api.Services.Interfaces;
 
 public interface IHotelService
 {
-    Task<HotelResponse?> FindByNameAsync(string name);
+    Task<List<HotelResponse>> GetHotelsAsync(string? name);
+    Task<HotelResponse?> FindByExactNameAsync(string name);
 }
